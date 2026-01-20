@@ -1,0 +1,51 @@
+# Dependencies
+node_modules
+**/node_modules
+
+# Build outputs
+dist
+**/dist
+.next
+**/.next
+.turbo
+**/.turbo
+
+# Development files
+.git
+.github
+.vscode
+*.md
+!README.md
+
+# Environment files (don't include secrets in image)
+.env
+.env.*
+!.env.example
+
+# Test files
+**/*.test.ts
+**/*.spec.ts
+__tests__
+coverage
+
+# IDE
+.idea
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Docker files (prevent recursive copying)
+docker
+Dockerfile
+docker-compose*.yml
+
+# Logs
+*.log
+logs
+
+# Temporary files
+tmp
+temp

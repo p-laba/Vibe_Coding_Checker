@@ -1,0 +1,53 @@
+# Docker Compose for local development
+# Run: docker compose -f docker/docker-compose.dev.yml up
+
+version: "3.9"
+
+services:
+  # Redis for job queue and pub/sub
+  redis:
+    image: redis:7-alpine
+    container_name: vibe-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+
+  # API server (optional - for testing Docker build)
+  api:
+    build:
+      context: ..
+      dockerfile: apps/api/Dockerfile
+    container_name: vibe-api
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=development
+      - PORT=5000
+      - REDIS_URL=redis://redis:6379
+      - ALLOWED_ORIGINS=http://localhost:3000
+      - SCAN_TIMEOUT_MS=300000
+      - MAX_REPO_SIZE_MB=500
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      # Mount for scanner tools (if not installing in container)
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+    profiles:
+      - full  # Only start with: docker compose --profile full up
+
+volumes:
+  redis-data:
+    driver: local
+
+networks:
+  default:
+    name: vibe-network
