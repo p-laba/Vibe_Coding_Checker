@@ -17,7 +17,7 @@ export async function validateGitHubUrl(url: string): Promise<RepoInfo> {
 
   // Check if repository exists and is public via GitHub API
   try {
-    const response = await fetch(
+    const response: globalThis.Response = await fetch(
       `https://api.github.com/repos/${owner}/${repo}`,
       {
         method: "GET",
